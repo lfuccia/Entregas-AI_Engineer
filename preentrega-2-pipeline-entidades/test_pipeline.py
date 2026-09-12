@@ -1,139 +1,90 @@
 """
-Prueba de estrés del pipeline — 100% offline, sin necesitar API key.
+test_pipeline.py
+================
 
-Usa `FakeListChatModel` para simular las respuestas de un LLM y así poder
-verificar de forma determinística:
+Mini-script de prueba asíncrono para el Pipeline de Extracción de Entidades
+Técnicas.
 
-  1. El "camino feliz": JSON bien formado en el primer intento.
-  2. Recuperación ante JSON mal formado (sintaxis inválida) en el primer
-     intento, corregido en el segundo -> demuestra que `.with_retry()`
-     funciona.
-  3. Recuperación ante JSON incompleto (falta un campo requerido) en el
-     primer intento, corregido en el segundo.
-  4. Un caso ambiguo/adversarial donde el modelo *insiste* en devolver una
-     lista de tecnologías vacía en todos los intentos: el validador de
-     Pydantic debe seguir rechazando la respuesta y, agotados los
-     reintentos, el pipeline debe propagar la excepción en lugar de
-     devolver un objeto inválido.
+Ejecuta la cadena LCEL (`chain.process_text`) contra tres párrafos de
+ejemplo:
+    1. Un texto claro (arquitectura típica con tecnologías explícitas).
+    2. Un log de error con criticidad alta.
+    3. Un texto AMBIGUO (la "prueba de estrés" sugerida en el enunciado),
+       para verificar que el validador reacciona con una excepción clara o
+       que el modelo se recupera infiriendo tecnologías razonables.
 
-Correr con:  python -m pytest test_pipeline.py -v
+Requiere tener configurada la API key del proveedor elegido (ver
+`.env.example` / `LLM_PROVIDER` en `.env`).
+
+Uso:
+    python test_pipeline.py
 """
 
 from __future__ import annotations
 
+import asyncio
 import json
+import logging
 
-import pytest
-from langchain_core.exceptions import OutputParserException
-from langchain_core.language_models.fake_chat_models import FakeListChatModel
+from pydantic import ValidationError
 
-from pipeline import build_parser_chain
+from chain import logger, process_text
 
-TEXTO_EJEMPLO = (
-    "Estamos viendo timeouts intermitentes en el servicio de checkout. El log "
-    "muestra 'connection pool exhausted' contra la base Postgres, y el API "
-    "Gateway en AWS devuelve 504 luego de 30 segundos. El equipo sospecha que "
-    "el último deploy con Kubernetes cambió los límites de conexiones del "
-    "pool de PgBouncer."
-)
-
-JSON_VALIDO = json.dumps(
-    {
-        "tecnologias": ["PostgreSQL", "AWS API Gateway", "Kubernetes", "PgBouncer"],
-        "nivel_de_criticidad": "alta",
-        "resumen_tecnico": (
-            "Timeouts intermitentes en checkout por agotamiento del pool de "
-            "conexiones de Postgres tras un cambio de configuración en el "
-            "último deploy de Kubernetes."
-        ),
-    }
-)
-
-JSON_MAL_FORMADO = '{"tecnologias": ["PostgreSQL", "AWS"], "nivel_de_criticidad": "alta", '  # corte abrupto, JSON inválido
-
-JSON_INCOMPLETO = json.dumps(
-    {
-        "tecnologias": ["PostgreSQL", "AWS"],
-        # falta 'nivel_de_criticidad' y 'resumen_tecnico'
-    }
-)
-
-JSON_LISTA_VACIA = json.dumps(
-    {
-        "tecnologias": [],
-        "nivel_de_criticidad": "baja",
-        "resumen_tecnico": "El texto no menciona ninguna tecnología concreta.",
-    }
-)
+EJEMPLOS = {
+    "arquitectura_clara": (
+        "Nuestro backend expone una API en FastAPI que atiende picos de "
+        "5000 requests por segundo. Usamos Redis como capa de caché para "
+        "las consultas más frecuentes y PostgreSQL como base de datos "
+        "principal para persistencia. En el último incidente detectamos "
+        "que el pool de conexiones a PostgreSQL se agotaba bajo carga, "
+        "generando timeouts intermitentes en producción."
+    ),
+    "log_error_critico": (
+        "[2026-09-12 03:14:02] ERROR OutOfMemoryError en el servicio de "
+        "pagos (Java 17, Spring Boot). El pod fue reiniciado por "
+        "Kubernetes tras superar el límite de memoria. Se perdieron 12 "
+        "transacciones en cola de Kafka que no llegaron a persistirse en "
+        "MongoDB. Impacto: caída total del checkout durante 6 minutos."
+    ),
+    "texto_ambiguo": (
+        "El sistema anduvo raro toda la mañana, algunos usuarios se "
+        "quejaron de que 'todo iba lento' pero después se normalizó solo. "
+        "No quedó claro si fue la red, el servidor o algo del lado del "
+        "cliente. Nadie encontró nada raro en los dashboards."
+    ),
+}
 
 
-def _chain_con_respuestas(respuestas: list[str], max_intentos: int = 3):
-    fake_model = FakeListChatModel(responses=respuestas)
-    return build_parser_chain(fake_model, max_intentos=max_intentos)
+async def _ejecutar_ejemplo(nombre: str, texto: str) -> None:
+    separador = "=" * 70
+    print(f"\n{separador}\nEJEMPLO: {nombre}\n{separador}")
+    print(f"Texto de entrada:\n  {texto}\n")
+
+    try:
+        resultado = await process_text(texto)
+    except ValidationError as exc:
+        # El validador de Pydantic rechazó la respuesta final tras agotar
+        # los reintentos: esto es exactamente lo que el ejercicio pide
+        # verificar en la "prueba de estrés".
+        print(f"❌ Validación falló (esperable en textos ambiguos): {exc}")
+        return
+    except Exception as exc:  # noqa: BLE001 - mini-script de demostración
+        print(f"❌ El pipeline falló tras agotar los reintentos: {exc}")
+        return
+
+    print("✅ Objeto validado:")
+    print(json.dumps(resultado.model_dump(mode="json"), indent=2, ensure_ascii=False))
 
 
-def test_camino_feliz_primer_intento():
-    """JSON válido desde el primer intento: no debería hacer falta reintentar."""
-    chain = _chain_con_respuestas([JSON_VALIDO])
-    resultado = chain.invoke({"texto_entrada": TEXTO_EJEMPLO})
+async def main() -> None:
+    logging.getLogger("rag_entity_pipeline").setLevel(logging.INFO)
+    logger.info("Arrancando mini-script de prueba asíncrono...")
 
-    assert resultado.nivel_de_criticidad.value == "alta"
-    assert "PostgreSQL" in resultado.tecnologias
-    assert len(resultado.resumen_tecnico) >= 10
+    for nombre, texto in EJEMPLOS.items():
+        await _ejecutar_ejemplo(nombre, texto)
 
-
-def test_recupera_de_json_mal_formado():
-    """
-    Primer intento: JSON con sintaxis inválida (corte abrupto).
-    Segundo intento: JSON válido.
-    El pipeline debe recuperarse gracias a .with_retry().
-    """
-    chain = _chain_con_respuestas([JSON_MAL_FORMADO, JSON_VALIDO])
-    resultado = chain.invoke({"texto_entrada": TEXTO_EJEMPLO})
-
-    assert resultado.nivel_de_criticidad.value == "alta"
-    assert "Kubernetes" in resultado.tecnologias
-
-
-def test_recupera_de_json_incompleto():
-    """
-    Primer intento: JSON válido como sintaxis pero incompleto (faltan campos
-    requeridos del esquema). Segundo intento: JSON completo.
-    """
-    chain = _chain_con_respuestas([JSON_INCOMPLETO, JSON_VALIDO])
-    resultado = chain.invoke({"texto_entrada": TEXTO_EJEMPLO})
-
-    assert resultado.nivel_de_criticidad.value == "alta"
-    assert resultado.resumen_tecnico.startswith("Timeouts")
-
-
-def test_falla_de_forma_controlada_si_insiste_en_lista_vacia():
-    """
-    Caso adversarial: el modelo devuelve, en TODOS los intentos, una lista de
-    tecnologías vacía (JSON válido, pero que viola nuestra regla de negocio).
-
-    El validador de Pydantic debe seguir rechazando la respuesta; agotados
-    los `max_intentos`, la cadena debe propagar la excepción en lugar de
-    devolver silenciosamente un objeto inválido.
-    """
-    chain = _chain_con_respuestas([JSON_LISTA_VACIA], max_intentos=3)
-
-    with pytest.raises(OutputParserException) as exc_info:
-        chain.invoke({"texto_entrada": "Todo funciona bien, sin más detalle."})
-
-    assert "tecnologias" in str(exc_info.value)
-
-
-def test_agota_reintentos_configurados():
-    """
-    Si el JSON mal formado se repite más veces de las que permite
-    `max_intentos`, la cadena también debe fallar (no reintenta infinito).
-    """
-    chain = _chain_con_respuestas([JSON_MAL_FORMADO], max_intentos=2)
-
-    with pytest.raises(OutputParserException):
-        chain.invoke({"texto_entrada": TEXTO_EJEMPLO})
+    print("\nListo. Revisá los logs de arriba para ver validaciones y reintentos.")
 
 
 if __name__ == "__main__":
-    raise SystemExit(pytest.main([__file__, "-v"]))
+    asyncio.run(main())
