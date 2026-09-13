@@ -1,0 +1,22 @@
+[
+  {
+    "pregunta": "¿Qué servidor ASGI se usa típicamente para correr una aplicación FastAPI en producción?",
+    "respuesta": "En producción se usa un servidor ASGI como Uvicorn, generalmente detrás de un proceso manager como Gunicorn con workers de tipo uvicorn.workers.UvicornWorker (o directamente varios procesos de Uvicorn detrás de un balanceador). Esto permite aprovechar múltiples núcleos de CPU, ya que un solo proceso de Uvicorn es asíncrono pero de un solo hilo de ejecución de Python.",
+    "categoria": "deployment"
+  },
+  {
+    "pregunta": "¿Cuál es la diferencia entre un endpoint 'def' y uno 'async def' en FastAPI?",
+    "respuesta": "Un endpoint declarado con 'async def' corre en el event loop principal, ideal para I/O asíncrono (llamadas a bases de datos async, HTTP a otros servicios). Un endpoint declarado con 'def' normal, en cambio, FastAPI lo ejecuta automáticamente en un threadpool aparte, para no bloquear el event loop si esa función hace algo síncrono y potencialmente lento (una librería de base de datos sin soporte async, por ejemplo).",
+    "categoria": "async"
+  },
+  {
+    "pregunta": "¿Cómo se documentan automáticamente los endpoints de una API FastAPI?",
+    "respuesta": "FastAPI genera automáticamente un esquema OpenAPI a partir de los type hints, los modelos Pydantic y los docstrings de las funciones, y lo expone en /docs (interfaz Swagger UI interactiva) y /redoc (interfaz ReDoc). No hace falta escribir la documentación por separado: los mismos modelos que se usan para validar requests y responses alimentan la documentación.",
+    "categoria": "documentacion"
+  },
+  {
+    "pregunta": "¿Qué es el middleware en FastAPI y para qué se usa típicamente?",
+    "respuesta": "Un middleware es una función que se ejecuta en cada request antes de llegar al endpoint, y en cada response antes de devolverse al cliente. Se usa típicamente para agregar headers CORS, medir el tiempo de respuesta, loggear cada request, o comprimir la respuesta con GZip. Se registra con app.add_middleware(...) o con el decorador @app.middleware('http').",
+    "categoria": "middleware"
+  }
+]

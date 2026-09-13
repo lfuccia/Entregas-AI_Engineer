@@ -1,0 +1,22 @@
+[
+  {
+    "pregunta": "¿Por qué hay que declarar las rutas estáticas antes que las rutas con parámetros variables en FastAPI?",
+    "documento_id_esperado": "01_fastapi_routing.md"
+  },
+  {
+    "pregunta": "¿Qué ventaja tiene declarar una dependencia con yield en vez de return en FastAPI?",
+    "documento_id_esperado": "02_fastapi_dependencias.md"
+  },
+  {
+    "pregunta": "¿Por qué conviene no reutilizar el mismo modelo Pydantic para el input y el output de un endpoint?",
+    "documento_id_esperado": "03_fastapi_validacion_pydantic.md"
+  },
+  {
+    "pregunta": "¿Qué servidor ASGI se usa típicamente para correr una aplicación FastAPI en producción?",
+    "documento_id_esperado": "04_faq_fastapi.json"
+  },
+  {
+    "pregunta": "¿Cómo se reemplaza la configuración 'class Config' de Pydantic v1 en la versión 2?",
+    "documento_id_esperado": "05_notas_migracion_pydantic_v2.pdf"
+  }
+]
