@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# El vectorstore se regenera corriendo ingest.py / rag_chain.py — no se
+# versiona (son archivos binarios de ChromaDB, no código).
+vectorstore/
