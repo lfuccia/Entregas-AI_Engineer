@@ -1,0 +1,18 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Bases SQLite del checkpointer (se regeneran solas al correr el agente)
+checkpoints.sqlite
+checkpoints.sqlite-*
+demo_checkpoints.sqlite
+demo_checkpoints.sqlite-*
+
+# trace_real.json lo genera cada uno con su propia API key / corridas;
+# trace_ejemplo.json (el determinístico) SÍ se versiona.
+trace_real.json
+
+.DS_Store

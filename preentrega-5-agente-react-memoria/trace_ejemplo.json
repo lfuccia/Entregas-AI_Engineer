@@ -1,0 +1,151 @@
+{
+  "nota": "Traza generada con demo_offline.py usando un LLM DETERMINÍSTICO de prueba (demo_llm.py) — sin llamadas a ninguna API — para que quede una evidencia reproducible en el repo. El grafo, el ToolNode, tools_condition y el AsyncSqliteSaver que se ven acá son los reales; para una traza con razonamiento de un LLM de verdad, correr run_demo.py con tu propia API key.",
+  "escenario_a_memoria_persistente": {
+    "descripcion": "Memoria persistente: la segunda pregunta se responde con datos ya obtenidos en la primera, sin volver a llamar a la herramienta, gracias al checkpointer + thread_id.",
+    "thread_id": "demo-cliente-102",
+    "pasos": [
+      {
+        "tipo": "HumanMessage",
+        "contenido": "¿Cuántos pedidos tuvo el cliente 102 y cuál fue el total?"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "",
+        "tool_calls": [
+          {
+            "herramienta": "buscar_pedidos",
+            "args": {
+              "cliente_id": 102
+            }
+          }
+        ]
+      },
+      {
+        "tipo": "ToolMessage",
+        "contenido": "{\"cliente_id\": 102, \"pedidos\": 3, \"total\": 14500, \"ultimo_pedido\": {\"id\": \"P-2044\", \"fecha\": \"2026-08-30\", \"monto\": 5200}}",
+        "herramienta": "buscar_pedidos",
+        "tool_call_id": "call_1"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "El cliente 102 tuvo 3 pedidos por un total de $14.500."
+      },
+      {
+        "tipo": "HumanMessage",
+        "contenido": "¿Y cuál fue el último pedido?"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "El último pedido del cliente 102 fue el P-2044, del 2026-08-30, por $5.200."
+      }
+    ]
+  },
+  "escenario_b_razonamiento_multi_paso": {
+    "descripcion": "Razonamiento multi-paso: para responder una sola pregunta, el agente llama a buscar_cliente (resolver nombre -> ID) y después a buscar_pedidos (ID -> pedidos), dos llamadas a herramientas distintas antes de concluir.",
+    "thread_id": "demo-nombre-cliente",
+    "pasos": [
+      {
+        "tipo": "HumanMessage",
+        "contenido": "¿Cuántos pedidos tuvo Martina Gómez y por cuánto total?"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "",
+        "tool_calls": [
+          {
+            "herramienta": "buscar_cliente",
+            "args": {
+              "nombre_o_id": "Martina Gómez"
+            }
+          }
+        ]
+      },
+      {
+        "tipo": "ToolMessage",
+        "contenido": "{\"encontrado\": true, \"cliente_id\": 103, \"nombre\": \"Martina Gómez\"}",
+        "herramienta": "buscar_cliente",
+        "tool_call_id": "call_2"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "",
+        "tool_calls": [
+          {
+            "herramienta": "buscar_pedidos",
+            "args": {
+              "cliente_id": 103
+            }
+          }
+        ]
+      },
+      {
+        "tipo": "ToolMessage",
+        "contenido": "{\"cliente_id\": 103, \"pedidos\": 7, \"total\": 58900, \"ultimo_pedido\": {\"id\": \"P-2091\", \"fecha\": \"2026-09-05\", \"monto\": 9200}}",
+        "herramienta": "buscar_pedidos",
+        "tool_call_id": "call_3"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "Martina Gómez (cliente 103) tuvo 7 pedidos por un total de $58.900."
+      }
+    ]
+  },
+  "escenario_c_ciclo_de_retorno": {
+    "descripcion": "Ciclo de retorno: buscar_cliente devuelve varios candidatos ambiguos ('Gómez' matchea a dos clientes) y el agente, en vez de inventar, le pide al usuario que aclare. En el turno siguiente (mismo thread_id) retoma con la aclaración.",
+    "thread_id": "demo-ambiguo",
+    "pasos": [
+      {
+        "tipo": "HumanMessage",
+        "contenido": "¿Cuántos pedidos tuvo el cliente Gómez?"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "",
+        "tool_calls": [
+          {
+            "herramienta": "buscar_cliente",
+            "args": {
+              "nombre_o_id": "Gómez"
+            }
+          }
+        ]
+      },
+      {
+        "tipo": "ToolMessage",
+        "contenido": "{\"encontrado\": false, \"ambiguo\": true, \"candidatos\": [{\"cliente_id\": 103, \"nombre\": \"Martina Gómez\"}, {\"cliente_id\": 104, \"nombre\": \"Diego Gómez\"}]}",
+        "herramienta": "buscar_cliente",
+        "tool_call_id": "call_4"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "Hay más de un cliente con apellido Gómez: Martina Gómez (103) y Diego Gómez (104). ¿A cuál te referís?"
+      },
+      {
+        "tipo": "HumanMessage",
+        "contenido": "Al 104, Diego Gómez."
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "",
+        "tool_calls": [
+          {
+            "herramienta": "buscar_pedidos",
+            "args": {
+              "cliente_id": 104
+            }
+          }
+        ]
+      },
+      {
+        "tipo": "ToolMessage",
+        "contenido": "{\"cliente_id\": 104, \"pedidos\": 0, \"total\": 0, \"mensaje\": \"Este cliente no tiene pedidos registrados todavía.\"}",
+        "herramienta": "buscar_pedidos",
+        "tool_call_id": "call_5"
+      },
+      {
+        "tipo": "AIMessage",
+        "contenido": "Diego Gómez (cliente 104) no tiene pedidos registrados todavía."
+      }
+    ]
+  }
+}

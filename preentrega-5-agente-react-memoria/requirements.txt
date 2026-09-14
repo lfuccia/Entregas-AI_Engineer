@@ -1,0 +1,15 @@
+langgraph>=0.6.0
+langgraph-checkpoint-sqlite>=2.0.0
+langchain-core>=0.3.0
+
+# Proveedor de LLM por defecto (gratis) — ver README para conseguir la key
+langchain-groq>=0.2.0
+# Alternativos, opcionales (activar con LLM_PROVIDER=openai / anthropic en .env)
+langchain-openai>=0.2.0
+langchain-anthropic>=0.3.0
+
+aiosqlite>=0.20.0
+python-dotenv>=1.0.0
+
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
