@@ -208,8 +208,8 @@ Corre las 5 preguntas de `golden_set.json` contra `RAGSystem` y calcula:
 
 ### 5. (Bonus) Generar una respuesta real de punta a punta
 
-No lo pide el enunciado de esta pre-entrega, pero si querés evidencia de
-una respuesta completa (no solo métricas de recuperación) y tenés
+No lo pide el enunciado de esta pre-entrega, pero configuramos un modelo de Groq para poder 
+probar todo el pipeline
 `GROQ_API_KEY` configurada:
 
 ```bash
@@ -266,9 +266,7 @@ Recall@5 = 100% ya con BM25 solo, lo cual confirma que el dataset y el
 golden set están bien alineados. **Los números finales de
 Precision@5/Recall@5 del sistema híbrido completo dependen de tu propia
 cuenta de Pinecone** (los embeddings ya no cuestan nada con el default
-HuggingFace) — corré `python evaluate.py` después de `ingest.py` y pegá
-acá el resultado real que te imprima la consola:
-
+HuggingFace) — corré `python evaluate.py` después de `ingest.py` 
 ```
 ==============================================================================
 REPORTE DE EVALUACIÓN — Precision@5 / Recall@5
@@ -313,8 +311,7 @@ Precision@5 promedio: 32.00%
 ==============================================================================
 ```
 
-Y, si probaste el paso opcional de generación, pegá acá la salida de
-`python test_generacion.py` (respuesta real generada + fuentes citadas,
+La salida de `python test_generacion.py` (respuesta real generada + fuentes citadas,
 incluida la pregunta trampa):
 
 ```
