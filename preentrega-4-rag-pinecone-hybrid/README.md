@@ -270,7 +270,47 @@ HuggingFace) — corré `python evaluate.py` después de `ingest.py` y pegá
 acá el resultado real que te imprima la consola:
 
 ```
-(pegar acá la salida de `python evaluate.py` una vez que tengas Pinecone configurado)
+==============================================================================
+REPORTE DE EVALUACIÓN — Precision@5 / Recall@5
+==============================================================================
+
+[1] Pregunta: ¿Por qué hay que declarar las rutas estáticas antes que las rutas con parámetros variables en FastAPI?
+    Documento(s) esperado(s): ['01_fastapi_routing.md']
+    Fuentes recuperadas (top-5): ['01_fastapi_routing.md', '02_fastapi_dependencias.md', '04_faq_fastapi.json', '04_faq_fastapi.json', '03_fastapi_validacion_pydantic.md']
+    Recall@5:    1.00
+    Precision@5: 0.20
+
+[2] Pregunta: ¿Qué ventaja tiene declarar una dependencia con yield en vez de return en FastAPI?
+    Documento(s) esperado(s): ['02_fastapi_dependencias.md']
+    Fuentes recuperadas (top-5): ['02_fastapi_dependencias.md', '04_faq_fastapi.json', '04_faq_fastapi.json', '05_notas_migracion_pydantic_v2.pdf', '04_faq_fastapi.json']
+    Recall@5:    1.00
+    Precision@5: 0.20
+
+[3] Pregunta: ¿Por qué conviene no reutilizar el mismo modelo Pydantic para el input y el output de un endpoint?
+    Documento(s) esperado(s): ['03_fastapi_validacion_pydantic.md']
+    Fuentes recuperadas (top-5): ['03_fastapi_validacion_pydantic.md', '01_fastapi_routing.md', '05_notas_migracion_pydantic_v2.pdf', '03_fastapi_validacion_pydantic.md', '02_fastapi_dependencias.md']
+    Recall@5:    1.00
+    Precision@5: 0.40
+
+[4] Pregunta: ¿Qué servidor ASGI se usa típicamente para correr una aplicación FastAPI en producción?
+    Documento(s) esperado(s): ['04_faq_fastapi.json']
+    Fuentes recuperadas (top-5): ['04_faq_fastapi.json', '04_faq_fastapi.json', '02_fastapi_dependencias.md', '05_notas_migracion_pydantic_v2.pdf', '03_fastapi_validacion_pydantic.md']
+    Recall@5:    1.00
+    Precision@5: 0.40
+
+[5] Pregunta: ¿Cómo se reemplaza la configuración 'class Config' de Pydantic v1 en la versión 2?
+    Documento(s) esperado(s): ['05_notas_migracion_pydantic_v2.pdf']
+    Fuentes recuperadas (top-5): ['05_notas_migracion_pydantic_v2.pdf', '04_faq_fastapi.json', '02_fastapi_dependencias.md', '01_fastapi_routing.md','05_notas_migracion_pydantic_v2.pdf']
+    Recall@5:    1.00
+    Precision@5: 0.40
+
+------------------------------------------------------------------------------
+RESUMEN
+------------------------------------------------------------------------------
+Preguntas evaluadas: 5
+Recall@5 promedio:    100.00%
+Precision@5 promedio: 32.00%
+==============================================================================
 ```
 
 Y, si probaste el paso opcional de generación, pegá acá la salida de
@@ -278,7 +318,28 @@ Y, si probaste el paso opcional de generación, pegá acá la salida de
 incluida la pregunta trampa):
 
 ```
-(pegar acá la salida de `python test_generacion.py`)
+==============================================================================
+[2] Pregunta: ¿Qué servidor ASGI se usa típicamente para correr FastAPI en producción?
+==============================================================================
+2026-09-13 21:50:35,142 | INFO     | rag_generation | Generando respuesta con Groq (openai/gpt-oss-120b)...
+2026-09-13 21:50:35,984 | INFO     | httpx | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+
+Respuesta:
+  En producción se suele usar **Uvicorn** como servidor ASGI, típicamente detrás de un gestor de procesos como **Gunicorn** con workers del tipo `uvicorn.workers.UvicornWorker` (o bien varios procesos de Uvicorn detrás de un balanceador).
+
+Fuentes citadas: ['04_faq_fastapi.json#fragmento_0', '04_faq_fastapi.json#fragmento_3', '02_fastapi_dependencias.md#fragmento_0', '03_fastapi_validacion_pydantic.md#fragmento_0', '05_notas_migracion_pydantic_v2.pdf#p1#fragmento_0']
+
+==============================================================================
+[3] Pregunta: ¿Cómo se configura el rate limiting con Redis en una aplicación FastAPI?
+==============================================================================
+2026-09-13 21:50:36,271 | INFO     | rag_generation | Generando respuesta con Groq (openai/gpt-oss-120b)...
+2026-09-13 21:50:36,922 | INFO     | httpx | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+
+Respuesta:
+  No tengo esa información en los documentos disponibles.
+
+Fuentes citadas: ['04_faq_fastapi.json#fragmento_2', '02_fastapi_dependencias.md#fragmento_0', '03_fastapi_validacion_pydantic.md#fragmento_1', '04_faq_fastapi.json#fragmento_1', '04_faq_fastapi.json#fragmento_3']
+
 ```
 
 ### Tests unitarios (offline, sin Pinecone, sin OpenAI, sin Groq)
