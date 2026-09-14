@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# corpus_cache.jsonl SÍ se versiona a propósito (no tiene secretos, solo
+# texto chunkeado) para que BM25Retriever funcione apenas se clona el repo,
+# incluso antes de correr ingest.py contra Pinecone. `ingest.py` lo
+# regenera automáticamente cada vez que corre.

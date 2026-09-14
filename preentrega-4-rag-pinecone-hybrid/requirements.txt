@@ -8,6 +8,10 @@ langchain-community>=0.3.0
 langchain-text-splitters>=0.3.0
 langchain-pinecone>=0.2.0
 langchain-openai>=0.2.0
+# Embeddings gratis/locales (default) y LLM de generación gratis (bonus):
+langchain-huggingface>=0.1.0
+sentence-transformers>=3.0.0
+langchain-groq>=0.2.0
 pinecone>=5.0.0
 rank_bm25>=0.2.2
 pypdf>=4.0.0

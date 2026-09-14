@@ -86,3 +86,26 @@ def test_ensemble_se_construye_una_sola_vez(monkeypatch):
 
     rag.query("segunda consulta")
     assert rag._ensemble is ensemble_despues_de_la_primera
+
+
+def test_answer_combina_query_y_generacion_sin_llamar_a_groq(monkeypatch):
+    """`RAGSystem.answer()` debe: 1) recuperar documentos con query(), y
+    2) pasárselos a generation.generar_respuesta(). Acá se reemplaza esa
+    función por una falsa para verificar el cableado sin llamar a Groq."""
+    import generation
+
+    llamada = {}
+
+    def generar_respuesta_falsa(pregunta, documentos):
+        llamada["pregunta"] = pregunta
+        llamada["documentos"] = documentos
+        return generation.RespuestaGenerada(respuesta="respuesta de prueba", fuentes=["a.md"])
+
+    monkeypatch.setattr(generation, "generar_respuesta", generar_respuesta_falsa)
+
+    rag = _rag_system_de_prueba(top_k=3)
+    resultado = rag.answer("¿Cómo se inyectan dependencias en FastAPI?")
+
+    assert resultado.respuesta == "respuesta de prueba"
+    assert llamada["pregunta"] == "¿Cómo se inyectan dependencias en FastAPI?"
+    assert len(llamada["documentos"]) <= 3

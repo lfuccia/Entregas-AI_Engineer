@@ -63,7 +63,8 @@ class RAGSystem:
         self._ensemble = None  # se arma lazy, la primera vez que hace falta
 
     # -- construcción lazy de cada rama (así importar el módulo no exige
-    # tener PINECONE_API_KEY/OPENAI_API_KEY configuradas) --------------
+    # tener PINECONE_API_KEY configurada; los embeddings HuggingFace no
+    # necesitan ninguna API key) ----------------------------------------
     def _construir_vector_retriever(self) -> BaseRetriever:
         from langchain_pinecone import PineconeVectorStore
 
@@ -132,3 +133,22 @@ class RAGSystem:
         resultados = await ensemble.ainvoke(pregunta)
         k = k or self.top_k
         return resultados[:k]
+
+    # -- Generación (opcional/bonus, ver generation.py) ------------------
+    def answer(self, pregunta: str, k: Optional[int] = None):
+        """Recupera + genera una respuesta grounded con un LLM gratuito
+        (Groq/Llama). Requiere GROQ_API_KEY en el .env. No forma parte del
+        checklist de esta pre-entrega (que pide solo recuperación +
+        evaluación), pero permite probar el pipeline de punta a punta con
+        una respuesta real."""
+        from generation import generar_respuesta
+
+        documentos = self.query(pregunta, k=k)
+        return generar_respuesta(pregunta, documentos)
+
+    async def aanswer(self, pregunta: str, k: Optional[int] = None):
+        """Versión asíncrona de `answer()`."""
+        from generation import agenerar_respuesta
+
+        documentos = await self.aquery(pregunta, k=k)
+        return await agenerar_respuesta(pregunta, documentos)

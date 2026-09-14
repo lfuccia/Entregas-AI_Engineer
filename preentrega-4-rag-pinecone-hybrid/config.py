@@ -25,11 +25,38 @@ INDEX_NAME = os.getenv("INDEX_NAME", "rag-documentacion-tecnica")
 PINECONE_NAMESPACE = os.getenv("PINECONE_NAMESPACE", "documentacion-tecnica")
 PINECONE_METRIC = os.getenv("PINECONE_METRIC", "cosine")
 
-# --- Embeddings (OpenAI: la dimensión del índice de Pinecone tiene que
-# coincidir EXACTAMENTE con la dimensión que devuelve este modelo) ---
+# --- Embeddings ---
+# La dimensión del índice de Pinecone tiene que coincidir EXACTAMENTE con
+# la dimensión que devuelve el modelo de embeddings elegido. Por default
+# se usa "huggingface" (sentence-transformers, LOCAL Y GRATIS, sin API key
+# ni tarjeta de crédito) para que todo el pipeline se pueda probar de
+# punta a punta sin costo. "openai" queda disponible como alternativa
+# (mejor calidad de embeddings, pero de pago) cambiando EMBEDDINGS_PROVIDER.
+EMBEDDINGS_PROVIDER = os.getenv("EMBEDDINGS_PROVIDER", "huggingface").strip().lower()
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1536"))
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")  # si EMBEDDINGS_PROVIDER=openai
+
+HUGGINGFACE_EMBEDDING_MODEL = os.getenv(
+    "HUGGINGFACE_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+)
+
+# Dimensión del vector que produce el modelo elegido:
+#   - sentence-transformers/all-MiniLM-L6-v2 (huggingface, default) -> 384
+#   - text-embedding-3-small (openai)                                -> 1536
+# Si cambiás de modelo, actualizá EMBEDDING_DIMENSION acorde (y recreá el
+# índice de Pinecone si ya existía con otra dimensión: ver pinecone_setup.py).
+_DIMENSION_DEFAULT = "384" if EMBEDDINGS_PROVIDER == "huggingface" else "1536"
+EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", _DIMENSION_DEFAULT))
+
+# --- LLM de generación (opcional: no lo pide el enunciado de esta
+# pre-entrega, pero permite generar una respuesta final de verdad —no solo
+# métricas de recuperación— como evidencia adicional para el README).
+# Groq ofrece modelos open-source (Llama) con un free tier real, sin
+# tarjeta de crédito: https://console.groq.com -> API Keys.
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0"))
 
 # --- Datos / chunking ---
 DATA_DIR = Path(os.getenv("DATA_DIR", "./data"))

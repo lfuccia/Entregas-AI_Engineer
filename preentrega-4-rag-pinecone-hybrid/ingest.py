@@ -10,7 +10,8 @@ Pipeline de Ingesta en Pinecone.
    TOKENS: 500-800, default 650, con 80 de overlap — el punto medio que
    pide el enunciado entre perder contexto y diluir la precisión del
    embedding).
-3. Genera embeddings (OpenAI, ver `embeddings.py`) y los sube a Pinecone
+3. Genera embeddings (HuggingFace local por default, u OpenAI; ver
+   `embeddings.py`) y los sube a Pinecone
    **incluyendo el texto original en la metadata** (para no depender de
    una base de datos relacional aparte para recuperar el contenido), bajo
    un namespace específico (evita namespace por defecto, que mezclaría
