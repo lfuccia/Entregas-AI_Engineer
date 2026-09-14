@@ -170,7 +170,6 @@ git — cada uno genera la suya con su propia key). A diferencia de
 `trace_ejemplo.json`, acá el razonamiento es genuino: el modelo puede
 elegir un camino ligeramente distinto en cada corrida.
 
-<!--
 2026-09-14 12:25:11,618 | INFO     | [A - memoria] Usuario: ¿Cuántos pedidos tuvo el cliente 102 y cuál fue el total?
 2026-09-14 12:25:12,511 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
 2026-09-14 12:25:12,941 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
