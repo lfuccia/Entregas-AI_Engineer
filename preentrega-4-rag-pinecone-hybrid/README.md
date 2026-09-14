@@ -221,6 +221,33 @@ Corre 3 preguntas contra `RAGSystem.answer()` (recupera con el
 respondibles y una trampa, para confirmar que el LLM dice "no lo sé" en
 vez de inventar cuando el contexto recuperado no alcanza.
 
+Ejecucion: 
+==============================================================================
+[2] Pregunta: ¿Qué servidor ASGI se usa típicamente para correr FastAPI en producción?
+==============================================================================
+2026-09-13 21:40:54,630 | INFO     | rag_generation | Generando respuesta con Groq (openai/gpt-oss-120b)...
+2026-09-13 21:40:57,444 | INFO     | httpx | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+
+Respuesta:
+  En producción se suele usar **Uvicorn** como servidor ASGI, típicamente detrás de un gestor de procesos como **Gunicorn** con workers del tipo `uvicorn.workers.UvicornWorker` (o bien varios procesos de Uvicorn detrás de un balanceador).
+
+Fuentes citadas: ['04_faq_fastapi.json#fragmento_0', '04_faq_fastapi.json#fragmento_3', '02_fastapi_dependencias.md#fragmento_0', '03_fastapi_validacion_pydantic.md#fragmento_0', '05_notas_migracion_pydantic_v2.pdf#p1#fragmento_0']
+
+==============================================================================
+[3] Pregunta: ¿Cómo se configura el rate limiting con Redis en una aplicación FastAPI?
+==============================================================================
+2026-09-13 21:40:57,761 | INFO     | rag_generation | Generando respuesta con Groq (openai/gpt-oss-120b)...
+2026-09-13 21:40:58,336 | INFO     | httpx | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+
+Respuesta:
+  No tengo esa información en los documentos disponibles.
+
+Fuentes citadas: ['04_faq_fastapi.json#fragmento_2', '02_fastapi_dependencias.md#fragmento_0', '03_fastapi_validacion_pydantic.md#fragmento_1', '04_faq_fastapi.json#fragmento_1', '04_faq_fastapi.json#fragmento_3']
+
+Revisá la pregunta [3]: es una trampa (rate limiting con Redis no está en ningún documento del dataset). El modelo debería decir explícitamente que no tiene esa información, no inventarla.
+(.venv) lfucc@MacBook-Air preentrega-4-rag-pinecone-hybrid % 
+
+
 ### Sanity check sin Pinecone (solo BM25)
 
 Como parte de la verificación de este entregable, se corrió **solo la

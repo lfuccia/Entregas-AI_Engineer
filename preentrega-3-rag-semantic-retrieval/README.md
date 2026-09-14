@@ -50,7 +50,7 @@ RespuestaRAG(respuesta=..., fuentes=[...])
 
 ### Decisiones clave (y los errores que evitan)
 
-- **Embeddings no coincidentes (error #1 del enunciado):** `ingest.py` y
+- **Embeddings no coincidentes:** `ingest.py` y
   `rag_chain.py` NUNCA instancian su propio modelo de embeddings; ambos
   importan `get_embeddings()` desde `embeddings.py`. Es imposible que
   indexen con un modelo y consulten con otro.
