@@ -1,0 +1,23 @@
+langgraph>=0.6.0
+langchain>=1.0.0
+langchain-core>=0.3.0
+
+# Proveedor de LLM por defecto (gratis) — ver README para conseguir la key
+langchain-groq>=0.2.0
+# Alternativos, opcionales (activar con LLM_PROVIDER=openai / anthropic en .env)
+langchain-openai>=0.2.0
+langchain-anthropic>=0.3.0
+
+# Opcional: solo si SEARCH_PROVIDER=tavily en .env (por defecto se usa
+# búsqueda simulada, sin esta librería)
+langchain-tavily>=0.1.0
+
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+
+# Para correr/exportar demo_notebook.ipynb
+jupyter>=1.0.0
+nbclient>=0.10.0
