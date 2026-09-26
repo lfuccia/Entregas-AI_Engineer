@@ -192,6 +192,39 @@ python main.py "Investigá las opiniones sobre el lanzamiento del auricular Auro
 Imprime cada contribución (investigador, analista, y las decisiones del
 supervisor) en orden, y cuántos pasos usó el Supervisor.
 
+(.venv) lfucc@MacBook-Air-2 preentrega-6-Orquestador-multi-agente-especializado % python main.py "Investigá las opiniones sobre el lanzamiento del auricular Aurora X2, analizá el sentimiento general y el promedio de las calificaciones, y dame un resumen."
+2026-09-26 19:18:58,632 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:18:59,399 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:00,356 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:00,863 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:01,437 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:01,971 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:03,654 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:04,504 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:05,360 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:06,759 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:07,166 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-26 19:19:07,167 | INFO     | Retrying request to /openai/v1/chat/completions in 6.000000 seconds
+2026-09-26 19:19:14,030 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:14,099 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-26 19:19:14,100 | INFO     | Retrying request to /openai/v1/chat/completions in 9.000000 seconds
+2026-09-26 19:19:23,661 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:23,732 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-26 19:19:23,733 | INFO     | Retrying request to /openai/v1/chat/completions in 8.000000 seconds
+2026-09-26 19:19:32,797 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-26 19:19:33,209 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-26 19:19:33,210 | INFO     | Retrying request to /openai/v1/chat/completions in 10.000000 seconds
+2026-09-26 19:19:44,256 | INFO     | HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+
+--- Contribuciones ---
+[supervisor] Realiza una búsqueda en el corpus interno de reseñas y opiniones sobre el auricular 'Aurora X2' centrada en su lanzamiento. Obtén varios(hasta 5) fragmentos de reseñas que incluyan tanto texto de opinión como calificaciones numéricas (por ejemplo, estrellas o puntuación del 1 al 5).
+
+[investigador] Sorry, need more steps to process this request.
+
+[supervisor] Realiza una búsqueda en el corpus interno de reseñas y opiniones sobre el auricular 'Aurora X2' centrada en su lanzamiento. Obtén hasta 5 fragmentos de reseñas que incluyan tanto texto de opinión como calificaciones numéricas (por ejemplo, estrellas o puntuación del 1 al 5). Cada fragmento debe contener la valoración numérica y una breve cita del comentario.
+
+[investigador] **Fragmentos de reseñas encontradas sobre el lanzamiento del auricular “Aurora X2”**
+
 | # | Fuente | Calificación | Cita de la reseña |
 |---|--------|--------------|-------------------|
 | 1 | TiendaApp Reviews | **5 estrellas** | “El nuevo auricular Aurora X2 tiene un sonido excelente y la batería dura muchísimo más que el modelo anterior. **Totalmente recomendado**.” |
@@ -212,8 +245,6 @@ Los dos fragmentos analizados destacan la calidad del sonido, la mayor duración
 Resumen final para el usuario: El lanzamiento del auricular Aurora X2 recibió dos reseñas en el corpus interno, con calificaciones de 5 y 4 estrellas, lo que da un promedio de 4.5 estrellas sobre 5. El sentimiento general es positivo, destacando la excelente calidad de sonido, mayor duración de batería y mejoras respecto al modelo anterior, aunque se menciona un precio algo elevado.
 
 --- Pasos del Supervisor: 4 (completada) ---
-(.venv) lfucc@MacBook-Air-2 preentrega-6-Orquestador-multi-agente-especializado % 
-
 
 ### 2. Tests offline (sin API key, sin red)
 
