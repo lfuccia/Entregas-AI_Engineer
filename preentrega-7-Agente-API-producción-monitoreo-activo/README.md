@@ -151,6 +151,7 @@ curl http://localhost:8000/tasks/<job_id>
 La documentación interactiva (Swagger) queda en
 http://localhost:8000/docs.
 
+
 ## 5. Observabilidad
 
 Con `OBSERVABILITY_PROVIDER=phoenix` (el default), cada llamada al LLM y
