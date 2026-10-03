@@ -1,0 +1,35 @@
+# --- Orquestador multi-agente (heredado de la pre-entrega 6) ------------
+langgraph>=1.2.0
+langchain>=1.4.0
+langchain-core>=1.6.0
+
+# Proveedor de LLM por defecto (gratis) — ver README para conseguir la key
+langchain-groq>=1.1.0
+# Alternativos, opcionales (activar con LLM_PROVIDER=openai / anthropic en .env)
+langchain-openai>=1.6.0
+langchain-anthropic>=1.7.0
+
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# --- API de producción (pre-entrega 7) -----------------------------------
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+redis>=5.0.0
+httpx>=0.27.0
+
+# --- Observabilidad -------------------------------------------------------
+# Arize Phoenix (default, gratis y self-hosted: ver docker-compose.yml).
+# Solo el paquete LIVIANO del exportador -- el server de Phoenix corre
+# aparte, en su propio contenedor (imagen `arizephoenix/phoenix`).
+arize-phoenix-otel>=0.6.0
+openinference-instrumentation-langchain>=0.1.40
+# LangSmith (alternativa, requiere cuenta/API key) -- opcional, pero no
+# pesa activarlo igual: si OBSERVABILITY_PROVIDER=langsmith en el .env,
+# alcanza con setear LANGCHAIN_API_KEY (no hace falta ningún código extra).
+langsmith>=0.1.100
+
+# --- Tests ------------------------------------------------------------
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+fakeredis>=2.20.0
